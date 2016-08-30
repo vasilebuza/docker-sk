@@ -1,0 +1,38 @@
+backend:
+  build: ./rails-service
+  command: rails server -p 3000 -b '0.0.0.0'
+  volumes:
+    - ./rails-service:/app
+  ports:
+    - "3000:3000"
+  links:
+    - mysql
+    - frontend_clients
+    - frontend_distributors
+
+mysql:
+  image: mysql:5.5
+  ports:
+    - "3306"
+  volumes:
+    - ./db:/var/lib/mysql
+  environment:
+    - MYSQL_ALLOW_EMPTY_PASSWORD=yes
+
+frontend_clients:
+  build: ./frontend-clients
+  entrypoint: []
+  command: ember s
+  volumes:
+    - ./frontend-clients:/myapp
+  ports:
+    - "4200:4200"
+
+frontend_distributors:
+  build: ./frontend-distributors
+  entrypoint: []
+  command: ember s
+  volumes:
+    - ./frontend-distributors:/myapp
+  ports:
+    - "4201:4200"
